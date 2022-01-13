@@ -1,5 +1,5 @@
 ﻿using Castle.DynamicProxy;
-using Core.IOC;
+
 using Core.Utilities.Interceptors;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using Core.Extensions;
 using Bussines.Constants;
+using Core.Utilities.IoC;
 
 namespace Bussines.BussinesAspects.Autofac
 {

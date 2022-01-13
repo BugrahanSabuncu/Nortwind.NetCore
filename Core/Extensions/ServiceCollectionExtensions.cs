@@ -1,4 +1,5 @@
-﻿using Core.Utilities.IoC;
+﻿using Core.DependencyResolvers;
+using Core.Utilities.IoC;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;

@@ -2,7 +2,7 @@
 using Bussines.Concrete;
 using Core.DependencyResolvers;
 using Core.Extensions;
-using Core.IOC;
+
 using Core.Utilities.IoC;
 using Core.Utilities.Security.Encryption;
 using Core.Utilities.Security.JWT;
@@ -43,7 +43,7 @@ namespace WebAPI
             //services.AddSingleton<IProductService, ProductManager>();
             //services.AddSingleton<IProductDal, EfProductDal>();
             //services.AddCors();
-            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             
             
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();

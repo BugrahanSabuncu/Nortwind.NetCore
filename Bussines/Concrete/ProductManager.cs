@@ -3,6 +3,9 @@ using Bussines.BussinesAspects.Autofac;
 using Bussines.CCS;
 using Bussines.Constants;
 using Bussines.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Cach;
+using Core.Aspects.Autofac.Performance;
+using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Bussines;
@@ -31,21 +34,23 @@ namespace Bussines.Concrete
         }
         [SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidatior))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Add(Product product)
         {
             //ValidationTool.Validate(new ProductValidatior(), product);
 
+
             var result = BussinesRules.Run(
                 CheckIfProductCountofCategoryCorrect(product.CategoryID),
-                CheckIfProductNameExists(product.ProductName),CheckIfCategoryLimitExceded());
-            if (result!=null)
-            {                
+                CheckIfProductNameExists(product.ProductName), CheckIfCategoryLimitExceded());
+            if (result != null)
+            {
                 return result;
             }
             _productDal.Add(product);
             return new SuccessResult();
         }
-
+        [CacheAspect]//key=cache'e verilen isim,value
         public IDataResult<List<Product>> GetAll()
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(), Messages.ProductListed);
@@ -55,7 +60,8 @@ namespace Bussines.Concrete
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryID == id), Messages.ProductListed);
         }
-
+        [CacheAspect]
+        [PerformanceAspect(5)]//metodun çalışması 5 saniyeyi geçerse beni uyar
         public IDataResult<Product> GetById(int id)
         {
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == id));
@@ -74,7 +80,7 @@ namespace Bussines.Concrete
             }
             return new SuccessDataResult<List<ProductDetailDto>>(_productDal.GetProductsDetails());
         }
-
+        [CacheRemoveAspect("IProductService.Get")]//burada product ile sınırlı çalıştırmayı pattern sayesinde yaptık.
         public IResult Update(Product product)
         {
             if (CheckIfProductCountofCategoryCorrect(product.CategoryID).Success)
@@ -85,10 +91,10 @@ namespace Bussines.Concrete
             }
             return new SuccessResult(Messages.ProductAddedMessage);
         }
-        private IResult CheckIfProductCountofCategoryCorrect(int CategoryID)
+        private IResult CheckIfProductCountofCategoryCorrect(int CategoryID)//Bir kategoride 30'dan fazla ürün olamaz.
         {
             var result = _productDal.GetAll(p => p.CategoryID == CategoryID).Count;
-            if (result >= 10)
+            if (result >= 30)
             {
                 return new ErrorResult(Messages.ProductCountOfCategoryError);
             }
@@ -103,16 +109,23 @@ namespace Bussines.Concrete
             }
             return new SuccessResult();
         }
-        private IResult CheckIfCategoryLimitExceded()
+        private IResult CheckIfCategoryLimitExceded()//20 adetten fazla kategori olamaz.
         {
             
             var result = _categoryService.GetAll();
-            if (result.Data.Count>15)
+            if (result.Data.Count>20)
             {
                 return new ErrorResult(Messages.CategoryLimitExceded);
             }
             return new SuccessResult();
         }
-
+        [TransactionScopeAspect]
+        public IResult AddTransactionalTest(Product product)
+        {
+            //burada örneğin bir para transferi gibi bir senaryo oluşturulmalı
+            //gönderenin hesabından bakiye düştü fakat alıcının hesabına geçerken hata aldık.
+            //bu durumda burada yazılan kodların tamamı sorunsuz çalışmadıkça içerisindeki herhangi işlem tamamlanmamalı.
+            throw new NotImplementedException();
+        }
     }
 }
