@@ -14,7 +14,7 @@ namespace Bussines.ValidationRules.FluentValidation
             RuleFor(p => p.ProductName).MinimumLength(2);
             RuleFor(p => p.UnitPrice).NotEmpty();
             RuleFor(p => p.UnitPrice).GreaterThan(0);
-            RuleFor(p => p.UnitPrice).GreaterThan(10).When(p => p.CategoryID == 2);
+            RuleFor(p => p.UnitPrice).GreaterThan(10).When(p => p.CategoryId == 2);
             RuleFor(p => p.ProductName).Must(StarWithA).WithMessage("Ürün A harfi ile başlamalı");
         }
 

@@ -32,7 +32,7 @@ namespace Bussines.Concrete
             _productDal = productDal;
             _categoryService = categoryService;
         }
-        [SecuredOperation("product.add,admin")]
+        //[SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidatior))]
         [CacheRemoveAspect("IProductService.Get")]
         public IResult Add(Product product)
@@ -41,7 +41,7 @@ namespace Bussines.Concrete
 
 
             var result = BussinesRules.Run(
-                CheckIfProductCountofCategoryCorrect(product.CategoryID),
+                CheckIfProductCountofCategoryCorrect(product.CategoryId),
                 CheckIfProductNameExists(product.ProductName), CheckIfCategoryLimitExceded());
             if (result != null)
             {
@@ -58,7 +58,7 @@ namespace Bussines.Concrete
 
         public IDataResult<List<Product>> GetAllByCategoryId(int id)
         {
-            return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryID == id), Messages.ProductListed);
+            return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryId == id), Messages.ProductListed);
         }
         [CacheAspect]
         [PerformanceAspect(5)]//metodun çalışması 5 saniyeyi geçerse beni uyar
@@ -83,7 +83,7 @@ namespace Bussines.Concrete
         [CacheRemoveAspect("IProductService.Get")]//burada product ile sınırlı çalıştırmayı pattern sayesinde yaptık.
         public IResult Update(Product product)
         {
-            if (CheckIfProductCountofCategoryCorrect(product.CategoryID).Success)
+            if (CheckIfProductCountofCategoryCorrect(product.CategoryId).Success)
             {
                 _productDal.Update(product);
 
@@ -93,7 +93,7 @@ namespace Bussines.Concrete
         }
         private IResult CheckIfProductCountofCategoryCorrect(int CategoryID)//Bir kategoride 30'dan fazla ürün olamaz.
         {
-            var result = _productDal.GetAll(p => p.CategoryID == CategoryID).Count;
+            var result = _productDal.GetAll(p => p.CategoryId == CategoryID).Count;
             if (result >= 30)
             {
                 return new ErrorResult(Messages.ProductCountOfCategoryError);

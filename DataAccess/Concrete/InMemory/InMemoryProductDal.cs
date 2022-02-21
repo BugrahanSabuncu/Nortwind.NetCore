@@ -16,11 +16,11 @@ namespace DataAccess.Concrete.InMemory
         public InMemoryProductDal()
         {
             _products = new List<Product>() {
-            new Product(){ProductId=1,CategoryID=2,ProductName="Bardak",UnitPrice=50,UnitsInStock=45},
-            new Product(){ProductId=2,CategoryID=2,ProductName="Tabak",UnitPrice=50,UnitsInStock=15},
-            new Product(){ProductId=3,CategoryID=2,ProductName="Çatal",UnitPrice=40,UnitsInStock=30},
-            new Product(){ProductId=4,CategoryID=3,ProductName="Tava",UnitPrice=20,UnitsInStock=15},
-            new Product(){ProductId=5,CategoryID=3,ProductName="Tencere",UnitPrice=15,UnitsInStock=60},
+            new Product(){ProductId=1,CategoryId=2,ProductName="Bardak",UnitPrice=50,UnitsInStock=45},
+            new Product(){ProductId=2,CategoryId=2,ProductName="Tabak",UnitPrice=50,UnitsInStock=15},
+            new Product(){ProductId=3,CategoryId=2,ProductName="Çatal",UnitPrice=40,UnitsInStock=30},
+            new Product(){ProductId=4,CategoryId=3,ProductName="Tava",UnitPrice=20,UnitsInStock=15},
+            new Product(){ProductId=5,CategoryId=3,ProductName="Tencere",UnitPrice=15,UnitsInStock=60},
             };
         }
 
@@ -37,7 +37,7 @@ namespace DataAccess.Concrete.InMemory
 
         public List<Product> GetAllByCategories(int categori)
         {
-            return _products.Where(p => p.CategoryID == categori).ToList();
+            return _products.Where(p => p.CategoryId == categori).ToList();
         }
 
        
@@ -48,7 +48,7 @@ namespace DataAccess.Concrete.InMemory
             productToUpdate.ProductId = product.ProductId;
             productToUpdate.ProductName = product.ProductName;
             productToUpdate.UnitPrice = product.UnitPrice;
-            productToUpdate.CategoryID = product.CategoryID;
+            productToUpdate.CategoryId = product.CategoryId;
             productToUpdate.UnitsInStock = product.UnitsInStock;
         }
 
